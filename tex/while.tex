@@ -7,3 +7,29 @@
     \end{lstlisting} 
     ¿Se puede definir $\mathcal{N}$ correctamente?
 \end{enun}
+\begin{sol}
+    La semántica $\mathcal{N}$ para esta sintaxis se podría obtener trivialmente
+    utilizando la misma que para el caso en que los constructores compuestos
+    tuviesen el orden inverso. De esta forma, lo único que cambiaría sería que
+    "la lectura" del número se haría de izquierda a derecha. Si intuitivamente
+    pensamos en $n$ como un número binario, diríamos que los bits menos
+    significativos son los de la izquierda en contra de lo usual (que son los de
+    la derecha).
+
+    Sin embargo, si queremos mantener el convenio de lectura de estos numerales,
+    debemos hacer uso de una función auxiliar. Esta se deberá definir
+    composicionalmente y simplemente es la longitud:
+    \begin{gather*}
+        \mathrm{long}: \mathrm{Num} \rightarrow \mathbb{Z}\\
+        \mathrm{long}[[0]] = \mathrm{long}[[1]] = 1\\
+        \mathrm{long}[[0\ n]] = \mathrm{long}[[1\ n]] = 1 + \mathrm{long}[[n]]
+    \end{gather*}
+    En definitiva, la función semántica será:
+    \begin{gather*}
+        \mathcal{N}: \mathrm{Num} \rightarrow \mathbb{Z}\\
+        \mathcal{N}[[0]] = 0\\
+        \mathcal{N}[[0]] = 1\\
+        \mathcal{N}[[0\ n]] = \mathcal{N}[[n]]\\
+        \mathcal{N}[[1\ n]] = 2^{\mathrm{long}[[n]]} \cdot \mathcal{N}[[n]]
+    \end{gather*}
+\end{sol}

@@ -33,3 +33,61 @@
         \mathcal{N}[[1\ n]] = 2^{\mathrm{long}[[n]]} \cdot \mathcal{N}[[n]]
     \end{gather*}
 \end{sol}
+
+\section{Ejercicio 2}
+\begin{enun}
+    Explicitar la equivalencia sintáctica entre las dos formas vistas de definir
+    sintácticamente los numerales (en un orden y el otro) mediante dos
+    biyecciones, $M: \mathrm{Num}' \rightarrow \mathrm{Num}$ y
+    $M': \mathrm{Num} \rightarrow \mathrm{Num}'$, tales que $M' \circ M =
+    \mathrm{Id}_{\mathrm{Num}'}$ y $M \circ M' = \mathrm{Id}_{\mathrm{Num}}$.
+\end{enun}
+\begin{sol}
+    En primer lugar, de manera natural podemos definir las funciones $M$ y $M'$
+    tal que:
+    \begin{align*}
+        \begin{gathered}
+            M: \mathrm{Num}' \rightarrow \mathrm{Num}\\
+            M\left( 0' \right) = 0\\
+            M\left( 1' \right) = 1\\
+            M\left( 0'\ n' \right) = M\left( n' \right)\ 0\\
+            M\left( 1'\ n' \right) = M\left( n' \right)\ 1
+        \end{gathered}
+        &&
+        \begin{gathered}
+            M': \mathrm{Num} \rightarrow \mathrm{Num}'\\
+            M'\left( 0 \right) = 0'\\
+            M'\left( 1 \right) = 1'\\
+            M'\left( n\ 0 \right) = 0'\ M'\left( n \right)\\
+            M'\left( n\ 1 \right) = 1'\ M'\left( n \right)
+        \end{gathered}
+    \end{align*}
+    Veamos ahora por inducción que $M \circ M' = \mathrm{Id}_{\mathrm{Num}}$:
+    \begin{enumerate}
+        \item \underline{Casos base}:
+        \begin{itemize}
+            \item $n = 0$: $M'\left( 0 \right) = 0'$ y $M\left( 0' \right) = 0
+                \Rightarrow M \circ M' \left( 0 \right) = 0$.
+            \item $n = 1$: $M'\left( 1 \right) = 1'$ y $M\left( 1'
+                \right) = 1 \Rightarrow M \circ M' \left( 1 \right) = 1$.
+        \end{itemize}
+        Por tanto, se cumple para los casos base.
+
+        \item \underline{Caso inductivo}: Supongamos por hipótesis de inducción
+            que esta composición es la identidad al aplicarse sobre los
+            constituyentes de los constructores compuestos de $\mathrm{Num}$,
+            que denominaremos $n$. Es decir, $M \circ M' \left( n \right) = n$.
+            Veamos ahora que ocurre ahora en los operadores:
+            \begin{itemize}
+                \item \underline{$n := n\ 0$}: Como $M'\left( n\ 0 \right) = 0'\ M'\left( n
+                    \right)$, aplicando ahora $M$ tenemos que $M\left( 0'\
+                    M'\left( n \right) \right) = M\left( M'\left( n \right)
+                    \right)\ 0 = n\ 0$ (esta última igualdad por hipótesis de
+                    inducción).
+
+                \item \underline{$n := n\ 1$}: Similar al anterior punto.
+            \end{itemize}
+    \end{enumerate}
+    Para ver la composición inversa podemos utilizar el mismo razonamiento y con
+    esto tenemos el resultado que buscábamos.
+\end{sol}

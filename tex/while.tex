@@ -91,3 +91,95 @@
     Para ver la composición inversa podemos utilizar el mismo razonamiento y con
     esto tenemos el resultado que buscábamos.
 \end{sol}
+
+\section{Ejercicio 3}
+\begin{enun}
+    Definir el conjunto de variables libres para una expresión booleana y
+    demostrar un resultado similar al Lema 1.
+\end{enun}
+\begin{sol}
+    Utilizaremos una definición inductiva sobre las expresiones:
+    \begin{align*}
+        \mathrm{FV}\left( \lstinline{true} \right) &= \mathrm{FV}\left(
+        \lstinline{false} \right) = \emptyset\\
+        \mathrm{FV}\left( a_1 = a_2 \right) &= \mathrm{FV}\left( a_1 \right) \cup
+        \mathrm{FV}\left( a_2 \right)\\
+        \mathrm{FV}\left( a_1 \le a_2 \right) &= \mathrm{FV}\left( a_1 \right) \cup
+        \mathrm{FV}\left( a_2 \right)\\
+        \mathrm{FV}\left( \neg b \right) &= \mathrm{FV}\left( b \right)\\
+        \mathrm{FV}\left( b_1 \land b_2 \right) &= \mathrm{FV}\left( b_1 \right) \cup
+        \mathrm{FV}\left( b_2 \right)\\
+    \end{align*}
+
+    El resultado similar al Lema 1 será entonces:
+    \begin{lema}
+        Sean $s, s' \in \mathrm{State}$ tales que $\forall x \in
+        \mathrm{FV}\left( b \right).s\ x = s'\ x$, entonces $\mathcal{B}\left[
+        \left[ b \right] \right]s = \mathcal{B}[[b]]s'$.
+    \end{lema}
+    \begin{demo}
+        Realizaremos una demostración por inducción estructural.
+        \begin{itemize}
+        \item \underline{Casos base}: ($b := \lstinline{true}$ ó
+        $\lstinline{false}$)
+
+        En este caso, $\mathcal{B}[[b]]\text{s} = \text{tt}$ ó $\text{ff}$, respectivamente, $\forall
+        s \in \mathrm{State}$.
+
+        \item \underline{Casos inductivos}: Supongamos, por hipótesis de
+            inducción, que se cumple el lema para los componentes de los
+            constructores compuestos (que serán $a_1, a_2, b, b_1, b_2$),
+            entonces:
+            \begin{enumerate}
+                \item $\boxed{b := a_1 = a_2}$. Sabemos que en este caso,
+                    \[
+                        \mathcal{B}[[b]]s = \begin{cases}
+                            \text{tt},\quad &\text{si } \mathcal{A}[[a_1]]s =
+                            \mathcal{A}[[a_2]]s\\
+                            \text{ff},\quad &\text{c.c.}
+                        \end{cases}
+                    \]
+                    Por tanto, como $\mathrm{FV}\left( b \right) =
+                    \mathrm{FV}\left( a_1 \right) \cup \mathrm{FV}\left( a_2
+                    \right)$ y por la hipótesis del lema, tenemos que $a_1$ y $a_2$
+                    cumplen la hipótesis del lema 1 y, es decir,
+                    $\mathcal{A}[[a_i]]s = \mathcal{A}[[a_i]]s',\ \forall i \in \left\{
+                    1, 2\right\}$. Con esto último, podemos simplemente
+                    sustituir en la definición de la semántica $s$ por
+                    $s'$ y vemos que el resultado es directo.
+
+                \item $\boxed{b := a_1 \le a_2}$. Razonamiento similar al
+                    anterior apartado.
+
+                \item $\boxed{b := \neg b_1}$. Recordando la definición de la
+                    semántica de este operador tenemos que:
+                    \[
+                        \mathcal{B}[[\neg b_1]]s = \begin{cases}
+                            \text{tt},\quad &\text{si } \mathcal{B}[[b_1]]s =
+                            \text{ff}\\
+                            \text{ff},\quad &\text{si } \mathcal{B}[[b_1]]s =
+                            \text{tt}\\
+                        \end{cases}
+                    \]
+                    Pero como podemos aplicar la hipótesis de inducción sobre
+                    $b_1$, tenemos que $\mathcal{B}[[b_1]]s =
+                    \mathcal{B}[[b_1]]s'$ y, por tanto, podemos simplemente
+                    sustituir en la definición de la semántica $s$ por $s'$ y
+                    tendremos el resultado buscado.
+
+                \item $\boxed{b := b_1 \land b_2}$. La definición de la
+                    semántica para esta expresión, recordemos, es:
+                    \[
+                        \mathcal{B}[[b_1 \land b_2]]s = \begin{cases}
+                            \text{tt},\quad &\text{si } \mathcal{B}[[b_1]]s =
+                            \text{tt y }\mathcal{B}[[b_2]]s = \text{tt}\\
+                            \text{ff},\quad &\text{c.c}
+                        \end{cases}
+                    \]
+                    De nuevo, simplemente podemos utilizar la hipótesis de
+                    inducción sobre $b_1$ y $b_2$ y, sustituyendo $s$ por $s'$,
+                    tendremos el resultado que buscamos.
+            \end{enumerate}
+        \end{itemize}
+    \end{demo}
+\end{sol}

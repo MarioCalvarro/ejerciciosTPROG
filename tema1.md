@@ -227,3 +227,38 @@ $$
 \mathcal{A}\llbracket a \rrbracket \left( s \left[ y \mapsto
 \mathcal{A}\llbracket a_0 \rrbracket s \right] \right).
 $$
+### Resolución
+Lo demostraremos por inducción estructural sobre $a$. Casos base:
+- $a \equiv n \Rightarrow \llbracket n\left[ y \mapsto a_0 \right] \rrbracket s =
+    n,\ \forall s$. Por otro lado, $\llbracket n \rrbracket \underbrace{\left( s \left[ y
+    \mapsto \llbracket a_0 \rrbracket s \right] \right)}_{s'} = n$, por lo
+    que tenemos el resultado.
+- $a \equiv x \in \mathrm{Var} \Rightarrow \llbracket x \left[ y
+    \mapsto a_0 \right] \rrbracket s = \begin{cases}
+    \llbracket a_0 \rrbracket s,\ \text{ si } x = y\\
+    s\ x,\ \text{ si } x \neq y
+    \end{cases}$. Por otro lado, $\llbracket x \rrbracket \underbrace{\left( s \left[ y
+    \mapsto \llbracket a_0 \rrbracket s \right] \right)}_{s'}$ donde:
+    $$
+    s'\ x = \begin{cases}
+        s\ x,\ \text{ si } x \neq y\\
+        \llbracket a_0 \rrbracket s,\ \text{ si } x = y
+    \end{cases}.
+    $$ 
+    Por lo que tenemos el resultado.
+
+Veamos que se da ahora para los casos composicionales. Supongamos que se da para
+los constituyentes inmediatos $a_1$ y $a_2$ y que $op$ se refiere a $+, -$ ó
+$*$.
+- $a \equiv a_1\ op\ a_2 \Rightarrow \llbracket \left( a_1\ op\ a_2 \right)
+    \left[ y \mapsto a_0 \right] \rrbracket s = \llbracket a_1 \left[ y \mapsto
+    a_0 \right] \rrbracket s\ op\ \llbracket a_2 \left[ y \mapsto a_0 \right]
+    \rrbracket s$. Por otro lado,
+    $$
+    \llbracket a_1\ op\ a_2 \rrbracket \underbrace{\left( s \left[ y \mapsto
+    \llbracket a_0 \rrbracket s \right] \right)}_{s'} = \llbracket a_1
+    \rrbracket s'\ op\ \llbracket a_2 \rrbracket s'.
+    $$
+    Pero por hipótesis de inducción tenemos que $\llbracket a_i \left[ y \mapsto
+    a_0 \right] \rrbracket s = \llbracket a_i \rrbracket s',\ i \in \left\{ 1, 2
+    \right\}$, por lo que el resultado buscado se cumple.

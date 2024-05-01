@@ -155,4 +155,75 @@ lógicas de sobra conocidas o realizando tablas de verdad.
 
 ## Ejercicio 1.13
 ### Enunciado
+Sean dos estados $s$ y $s'$ tales que $\forall x \in \mathrm{FV}\left( b
+\right)$ se cumple que $s\ x = s'\ x$. Demostrar que $\mathcal{B}\llbracket b
+\rrbracket s = \mathcal{B}\llbracket b \rrbracket s'$.
 ### Resolución
+Lo realizaremos por inducción estructural. Veamos primero los casos base:
+- Si $b \equiv \mathrm{true}$ ó $\mathrm{false}$, entonces se cumple
+  trivialmente.
+- Si $b \equiv a_1 = a_2$ ó $a_1 \le a_2$, entonces, si escribimos $op \in \left\{ =, \le \right\}$, tenemos que:
+    $$
+    \mathcal{B}\llbracket b \rrbracket s = \begin{cases}
+        \mathbf{tt},\ \text{ si } \mathcal{A}\llbracket a_1 \rrbracket s\ op\
+        \mathcal{A}\llbracket a_2 \rrbracket s\\
+        \mathbf{ff},\ \text{ c.c.}
+    \end{cases}
+    $$
+    pero como $\mathcal{A}\llbracket a \rrbracket s = \mathcal{A}\llbracket a
+    \rrbracket s'$ (por el lema 1.12), 
+    $$
+    \begin{cases}
+        \mathbf{tt},\ \text{ si } \mathcal{A}\llbracket a_1 \rrbracket s\ op\
+        \mathcal{A}\llbracket a_2 \rrbracket s\\
+        \mathbf{ff},\ \text{ c.c.}
+    \end{cases} = \begin{cases}
+        \mathbf{tt},\ \text{ si } \mathcal{A}\llbracket a_1 \rrbracket s'\ op\
+        \mathcal{A}\llbracket a_2 \rrbracket s'\\
+        \mathbf{ff},\ \text{ c.c.}
+    \end{cases} = \mathcal{B}\llbracket b \rrbracket s'
+    $$
+    y, por tanto, se cumple el resultado.
+
+Veamos ahora los casos composicionales. Supongamos que se cumple para los
+constituyentes inmediatos $b_1$ y $b_2$:
+- Si $b \equiv ¬b_1$. Como $\mathrm{FV}\left( b \right) = \mathrm{FV}\left( ¬b
+    \right)$ podemos aplicar la hipótesis de inducción y $\mathcal{B}\llbracket
+    b_1 \rrbracket s = \mathcal{B}\llbracket b_1 \rrbracket s'$. Ahora, con esto,
+    tenemos que:
+    $$
+    \mathcal{B}\llbracket b \rrbracket s = \begin{cases}
+    \mathbf{tt},\ \text{ si } \mathcal{B}\llbracket b_1 \rrbracket s = \mathbf{tt}\\
+    \mathbf{ff},\ \text{ c.c }
+    \end{cases} = \begin{cases}
+    \mathbf{tt},\ \text{ si } \mathcal{B}\llbracket b_1 \rrbracket s' = \mathbf{tt}\\
+    \mathbf{ff},\ \text{ c.c }
+    \end{cases} = \mathcal{B}\llbracket b \rrbracket s'
+    $$
+    con lo que probamos el resultado.
+
+- Si $b \equiv b_1 \land b_2$. Como $\mathrm{FV}\left( b \right) =
+    \mathrm{FV}\left( b_1 \right) \cup \mathrm{FV}\left( b_2 \right)$ tenemos
+    que $\mathrm{FV}\left( b_i \right) \subset \mathrm{FV}$ por lo que podemos
+    aplicar la hipótesis de inducción, es decir, $\mathcal{B}\llbracket
+    b_i \rrbracket s = \mathcal{B}\llbracket b_i \rrbracket s',\ i \in \left\{
+    1, 2 \right\}$. Con esto,
+    $$
+    \mathcal{B}\llbracket b \rrbracket s = \begin{cases}
+    \mathbf{tt},\ \text{ si } \mathcal{B}\llbracket b_1 \rrbracket s = \mathbf{tt} \text{ y } \mathcal{B}\llbracket b_2 \rrbracket s = \mathbf{tt} \\
+    \mathbf{ff},\ \text{ c.c }
+    \end{cases}\\ = \begin{cases}
+    \mathbf{tt},\ \text{ si } \mathcal{B}\llbracket b_1 \rrbracket s' = \mathbf{tt} \text{ y } \mathcal{B}\llbracket b_2 \rrbracket s' = \mathbf{tt} \\
+    \mathbf{ff},\ \text{ c.c }
+    \end{cases} = \mathcal{B}\llbracket b \rrbracket s'
+    $$
+    con lo que probamos el resultado.
+
+## Ejercicio 1.14
+### Enunciado (Teorema fundamental de sustituciones)
+Demostrar que, para todo estado $s$, se cumple:
+$$
+\mathcal{A}\llbracket a\left[ y \mapsto a_0 \right] \rrbracket s =
+\mathcal{A}\llbracket a \rrbracket \left( s \left[ y \mapsto
+\mathcal{A}\llbracket a_0 \rrbracket s \right] \right).
+$$

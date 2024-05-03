@@ -8,7 +8,7 @@ Extender el lenguaje **WHILE** con la instrucción `for`:
 Definir la relación $\rightarrow$ para esta construcción.
 
 ### Resolución
-Veamos en primer lugar la definición:
+Veamos en primer lugar la definición cuando se entra en el bucle:
 $$
 \left[ \mathrm{for}_{\mathrm{ns}}^{\mathrm{tt}} \right] := \frac{\langle S,
 s\left[ x \mapsto \mathcal{A}\llbracket a_1 \rrbracket s\right] \rangle
@@ -33,7 +33,7 @@ destacables son los siguientes:
     «iteratividad» de la instrucción. Por eso, en las premisas tenemos un `for`,
     pero con la peculiaridad de que le asignamos una unidad más de su valor en
     el estado $s'$. Esto es una decisión de diseño que podría hacerse de
-    distinta manera, pero con esto aseguramos que el bucle acabe en algún
+    distinta manera, pero así aseguramos que el bucle acabe en algún
     momento.
 
 ## Ejercicio 2.10
@@ -213,4 +213,6 @@ o que si uno tiene una secuencia infinita de derivación, el otro también.
        \mathtt{;}\ S_3, s' \rangle$. Sin embargo, como la longitud de la
        secuencia para llegar a $\gamma$ desde $\langle S_1'\ \mathtt{;}\ \left(
        S_2\ \mathtt{;}\ S_3 \right), s' \rangle$ es $k - 1$, podemos aplicar la
-       hipótesis de inducción y obtenemos el resultado que esperábamos.
+       hipótesis de inducción, obtenemos que $S_1'\ \mathtt{;}\ \left(
+       S_2\ \mathtt{;}\ S_3 \right)$ y $\left( S_1'\ \mathtt{;}\ S_2 \right)\
+       \mathtt{;}\ S_3$ son equivalentes y tenemos el resultado que buscábamos.

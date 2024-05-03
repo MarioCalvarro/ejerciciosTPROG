@@ -10,11 +10,12 @@ Definir la relación $\rightarrow$ para esta construcción.
 ### Resolución
 Veamos en primer lugar la definición:
 $$
-\left[ \mathrm{for}_{\mathrm{ns}}^{\mathrm{tt}} \right] := \frac{\langle S, s\left[ x \mapsto
-\mathcal{A}\llbracket a_1 \rrbracket s\right] \rangle \rightarrow s', \langle \mathtt{for}\ x := x\ \mathtt{to}\ a_2\ \mathtt{do}\ S, s'\left[ x \mapsto \mathcal{A}\llbracket x + 1 \rrbracket s \right]
-\rangle \rightarrow s''}{\langle \mathtt{for}\ x := a_1\ \mathtt{to}\ a_2\ \mathtt{do}\ S, s
-\rangle \rightarrow s''},\\ \text{ si } \mathcal{B}\llbracket a_1 \le a_2
-\rrbracket s = \mathbf{tt}
+\left[ \mathrm{for}_{\mathrm{ns}}^{\mathrm{tt}} \right] := \frac{\langle S,
+s\left[ x \mapsto \mathcal{A}\llbracket a_1 \rrbracket s\right] \rangle
+\rightarrow s', \langle \mathtt{for}\ x := x + 1\ \mathtt{to}\ a_2\ \mathtt{do}\
+S, s' \rangle \rightarrow s''}{\langle \mathtt{for}\ x := a_1\ \mathtt{to}\ a_2\
+\mathtt{do}\ S, s \rangle \rightarrow s''},\\ \text{ si } \mathcal{B}\llbracket
+a_1 \le a_2 \rrbracket s = \mathbf{tt}.
 $$
 Y ahora el caso en que no se cumpla la condición:
 $$
@@ -28,14 +29,12 @@ destacables son los siguientes:
     ejecutar $S$ sobre el estado original $s$ después de aplicar la asignación a
     $x$ con $a_1$.
 
-- La definición no puede ser composición puesto que tenemos que capturar la
+- La definición no puede ser composicional puesto que tenemos que capturar la
     «iteratividad» de la instrucción. Por eso, en las premisas tenemos un `for`,
-    pero con un par de peculiaridades:
-    - La asignación de la $x$ es sobre sí misma para que no se haga cada
-        iteración.
-    - En vez de ser el estado $s'$ directamente, tenemos que hemos sustituido el
-        valor de $x$ por ella misma más $1$ para capturar que el bucle tiene un
-        número limitado de iteraciones.
+    pero con la peculiaridad de que le asignamos una unidad más de su valor en
+    el estado $s'$. Esto es una decisión de diseño que podría hacerse de
+    distinta manera, pero con esto aseguramos que el bucle acabe en algún
+    momento.
 
 ## Ejercicio 2.10
 ### Enunciado
@@ -137,3 +136,81 @@ $$
 \mathtt{until}\ b, s \rangle \Rightarrow \langle S\ \mathtt{;}\ \mathtt{if}\ b\
 \mathtt{then\ skip\ else}\ \left( \mathtt{repeat}\ S\ \mathtt{until}\ b \right), s \rangle
 $$
+
+## Ejercicio 2.18
+### Enunciado
+Dar una semántica de paso corto para la construcción `for`.
+### Resolución
+Tenemos la siguiente definición:
+$$
+\left[ \mathrm{for}_{\mathrm{sos}} \right] := \langle \mathtt{for}\ x := a_1\
+\mathtt{to}\ a_2\ \mathtt{do}\ S, s \rangle \Rightarrow\\ \langle \mathtt{if}\ a_1
+\le a_2\ \mathtt{then}\ \left( S\ \mathtt{;}\ \mathtt{for}\ x := x + 1\
+\mathtt{to}\ a_2\ \mathtt{do}\ S \right)\ \mathtt{else}\ \mathtt{skip}, s
+\rangle
+$$
+Es decir, si el valor de $x$ tras la asignación del inicio del `for` es inferior
+al valor de la expresión límite, ejecutamos una iteración. Para la siguiente
+iteración comenzamos sumando uno a $x$.
+
+## Ejercicio 2.23
+### Enunciado
+Mostrar la equivalencia semántica (paso corto) entre las siguientes parejas de
+sentencias:
+1. $S\ \mathtt{;}\ \mathtt{skip}$ y $S$.
+2. $\mathtt{while}\ b\ \mathtt{do}\ S$ y $\mathtt{if}\ b\ \mathtt{then}\ \left( S\ \mathtt{;}\ \mathtt{while}\ b\ \mathtt{do}\ S \right)\ \mathtt{else}\ \mathtt{skip}$.
+3. $S_1\ \mathtt{;}\ \left( S_2\ \mathtt{;}\ S_3 \right)$ y $\left( S_1\ \mathtt{;}\ S_2 \right)\ \mathtt{;}\ S_3$
+
+### Resolución
+Tenemos que demostrar para cada caso que:
+$$
+\langle S_1, s \rangle \Rightarrow^* \gamma \Leftrightarrow \langle S_2, s \rangle \Rightarrow^* \gamma,
+$$
+o que si uno tiene una secuencia infinita de derivación, el otro también.
+1. Sea $s \in \mathbf{State}$. Razonemos por inducción sobre la longitud de la
+   secuencia. 
+   - **Caso base**: El caso $k = 0$ no se puede dar directamente,
+       pero el caso $k = 1$ solo podrá salir de $\left[
+       \mathrm{comp}_{\mathrm{sos}}^2 \right]$, es decir, $\langle S\
+       \mathtt{;}\ \mathtt{skip}, s \rangle \Rightarrow \langle \mathtt{skip},
+       s' \rangle \Rightarrow s'$. Como se da esto, también se darán las
+       premisas de este derivación, es decir, $\langle S, s \rangle \Rightarrow
+       s'$ con lo que tenemos el resultado buscado.
+   - **Caso inductivo**: Sea $k > 1$, es decir, $\langle S\ \mathtt{;}\
+       \mathtt{skip}, s \rangle \Rightarrow^k \gamma$. Como $k > 1$, solo
+       podemos aplicar $\left[ \mathrm{comp}_{\mathrm{sos}}^1 \right]$, es
+       decir, $\langle S\ \mathtt{;}\ \mathtt{skip}, s \rangle \Rightarrow
+       \langle S'\ \mathtt{;}\ \mathtt{skip}, s' \rangle$. Con esto ahora
+       tendremos que $\langle S'\ \mathtt{;}\ \mathtt{skip}, s' \rangle
+       \Rightarrow^{k-1} \gamma$, con lo que podemos aplicar la hipótesis de
+       inducción y ver que $\langle S', s' \rangle \Rightarrow^{k-1} \gamma$.
+       Sin embargo, al aplicar la anterior derivación, también serán ciertas las
+       hipótesis, es decir, $\boxed{\langle S, s \rangle \Rightarrow \langle S',
+       s' \rangle} \Rightarrow^{k-1} \gamma$ con lo que tendremos el resultado.
+
+2. Trivialmente lo vemos por la definición del `while`.
+
+3. Sea $s \in \mathbf{State}$. Razonaremos por inducción sobre la longitud de la
+   cadena.
+   - **Caso base**. Si $k = 1$, solo podemos aplicar la derivación $\left[
+       \mathrm{comp}_{\mathrm{sos}}^2 \right]$ con lo que tenemos que $\langle
+       S_1\ \mathtt{;}\ \left( S_2\ \mathtt{;}\ S_3 \right), s \rangle
+       \Rightarrow \langle S_2\ \mathtt{;}\ S_3, s' \rangle$ y que $\langle S, s
+       \rangle \Rightarrow s'$. Pero, a su vez, si se cumple esto, tenemos que
+       $\langle S_1\ \mathtt{;}\ S_2, s \rangle \Rightarrow \langle S_2, s'
+       \rangle$ con lo que $\langle \left( S_1\ \mathtt{;}\ S_2 \right)\
+       \mathtt{;}\ S_3, s \rangle \Rightarrow \langle S_2\ \mathtt{;}\ S_3, s'
+       \rangle$
+
+   - **Caso inductivo**. Si $k > 1$, tenemos que aplicar $\left[
+       \mathrm{comp}_{\mathrm{sos}}^1 \right]$ con lo que tenemos $\langle S_1\
+       \mathtt{;}\ \left( S_2\ \mathtt{;}\ S_3 \right), s \rangle \Rightarrow
+       \langle S_1'\ \mathtt{;}\ \left( S_2\ \mathtt{;}\ S_3 \right), s'
+       \rangle$ y la premisa $\langle S_1, s \rangle \Rightarrow \langle S_1',
+       s' \rangle$. Como antes, con esta premisa aplicada a la otra sentencia,
+       tenemos que $\langle \left( S_1\ \mathtt{;}\ S_2 \right)\ \mathtt{;}\
+       S_3, s \rangle \Rightarrow \langle \left( S_1'\ \mathtt{;}\ S_2 \right)\
+       \mathtt{;}\ S_3, s' \rangle$. Sin embargo, como la longitud de la
+       secuencia para llegar a $\gamma$ desde $\langle S_1'\ \mathtt{;}\ \left(
+       S_2\ \mathtt{;}\ S_3 \right), s' \rangle$ es $k - 1$, podemos aplicar la
+       hipótesis de inducción y obtenemos el resultado que esperábamos.

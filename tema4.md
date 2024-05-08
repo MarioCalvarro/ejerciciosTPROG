@@ -203,3 +203,56 @@ La compilación será:
 $$
 \mathcal{CS}\llbracket \mathtt{repeat}\ S\ \mathtt{until}\ b \rrbracket = \mathcal{CS}\llbracket S \rrbracket : \mathtt{LOOP}\left( \mathcal{CB}\llbracket ¬b \rrbracket, \mathcal{CS}\llbracket S \rrbracket \right).
 $$
+
+## Ejercicio 4.16
+### Enunciado
+Dar la función de compilación para las instrucciones de **WHILE** a la MA del
+ejercicio 4.7. Utilizar la función $env: \mathbf{Var} \rightarrow \mathbb{N}$
+que, dada una variable, devuelve su dirección de memoria.
+
+### Resolución
+Tan solo tendremos que cambiar las asignaciones y el *fetch* de las variables:
+$$
+\begin{align*}
+    \mathcal{CA}\llbracket x \rrbracket &= \mathtt{GET-}\left( env\ x \right)\\
+    \mathcal{CA}\llbracket x := a \rrbracket &= \mathcal{CA}\llbracket a \rrbracket : \mathtt{PUT-}\left( env\ x \right)
+\end{align*}
+$$
+El resto de traducciones se mantendrán igual.
+
+## Ejercicio 4.17
+### Enunciado
+Dar la función de compilación para las instrucciones de **WHILE** a la MA del
+ejercicio 4.8. Garantizar la unicidad de las etiquetas incorporando el parámetro
+adicional *siguiente etiqueta sin usar* ($\mathrm{sig}$).
+
+### Resolución
+De nuevo, las únicas instrucciones que cambiarán son los `if` y los `while`.
+Diremos que:
+- Condicional:
+    $$
+    \begin{align*}
+    \mathcal{CA}\llbracket \mathtt{if}\ b\ \mathtt{then}\ S_1\ \mathtt{else}\
+    S_2, l \rrbracket =\ &\mathcal{CB}\llbracket b \rrbracket :
+    \mathtt{JUMPFALSE-}l : \mathcal{CS}\llbracket S_1, l + 2 \rrbracket :
+    \mathtt{JUMP-}\left( l+1 \right)\\
+    &: \mathtt{LABEL-}l : \mathcal{CS}\llbracket S_2, l+2 \rrbracket :
+    \mathtt{LABEL-}\left( l+1 \right).
+    \end{align*}
+    $$
+    Es decir, evaluamos $b$ si es falso saltamos al *label* que hemos puesto
+    justo después del bloque $S_1$. Si se ejecuta $S_1$, tenemos que saltar al
+    final del condicional para que no se ejecute $S_2$ también.
+
+- Bucle:
+    $$
+    \begin{align*}
+    \mathcal{CA}\llbracket \mathtt{while}\ b\ \mathtt{do}\ S \rrbracket =\ 
+    &\mathtt{LABEL-}l :\mathcal{CB}\llbracket b \rrbracket : \mathtt{NEG} :
+    \mathtt{JUMPFALSE}-\left( l+1 \right)\\
+    &: \mathcal{CS}\llbracket S, l+2 \rrbracket : \mathtt{JUMP-} l : \mathtt{LABEL-}\left( l+1 \right).
+    \end{align*}
+    $$
+    Es decir, creamos un *label* al que saltaremos una vez iteremos sobre el
+    bucle y evaluamos la condición del `while`. Si es cierta, saltamos al final
+    de bucle y si no ejecutamos $S$.

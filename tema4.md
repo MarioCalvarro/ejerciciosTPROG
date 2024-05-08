@@ -256,3 +256,33 @@ Diremos que:
     Es decir, creamos un *label* al que saltaremos una vez iteremos sobre el
     bucle y evaluamos la condición del `while`. Si es cierta, saltamos al final
     de bucle y si no, ejecutamos $S$.
+
+## Ejercicio 4.23
+### Enunciado
+Supongamos que la traducción de $\mathtt{skip}$ es no generar código. ¿Complica
+esto la demostración de la equivalencia entre la semántica operacional de paso
+largo y la semántica derivada de la compilación a AM?
+
+### Resolución
+Lo veremos en dos partes. En primer lugar, la prueba de que si $\langle S, s
+\rangle \rightarrow s'$, entonces $\langle \mathcal{CS}\llbracket S \rrbracket,
+\varepsilon, s \rangle \triangleright^* \langle \varepsilon, \varepsilon, s'
+\rangle$, no cambia en absoluto. Sin embargo, la demostración de la inversa
+tiene que modificarse ligeramente. Ahora el caso base de $k = 0$ no es trivial.
+Si denotamos por $S_n := \mathbf{skip\ ;\ skip\ ;}\ldots \mathtt{skip}$
+tenemos que $\langle \mathcal{CS}\llbracket S_n \rrbracket = \varepsilon,
+\varepsilon, s \rangle \triangleright^0 \langle \varepsilon, \varepsilon, s'
+\rangle$. En este caso, es obvio que $s = s'$. Veamos ahora por inducción sobre
+$n$ que se cumple lo que buscamos:
+- $n = 1$. En este caso $S_1 = \mathtt{skip}$ por lo que solo podemos aplicar
+    $\left[ \mathrm{skip}_{\mathrm{ns}} \right]$ y obtenemos:
+    $$
+    \langle S_1, s \rangle \rightarrow s.
+    $$
+
+- Caso inductivo. Supongamos cierta la hipótesis para $n$. Como $S_{n+1} = S_n
+    \mathtt{;} \mathtt{skip}$ y $\langle \mathtt{skip}, s \rangle \rightarrow s$
+    y, por HI, $\langle S_n, s \rangle \rightarrow s$, podemos aplicar $\left[ \mathrm{comp}_{\mathrm{ns}} \right]$ y obtenemos que
+    $$
+    \langle S_{n+1}, s \rangle \rightarrow s.
+    $$

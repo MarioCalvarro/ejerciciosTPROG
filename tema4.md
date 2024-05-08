@@ -255,4 +255,4 @@ Diremos que:
     $$
     Es decir, creamos un *label* al que saltaremos una vez iteremos sobre el
     bucle y evaluamos la condición del `while`. Si es cierta, saltamos al final
-    de bucle y si no ejecutamos $S$.
+    de bucle y si no, ejecutamos $S$.

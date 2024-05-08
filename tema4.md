@@ -1,4 +1,4 @@
-# Semántica operacional básica. Ejercicios
+# Implementación correcta. Ejercicios
 ## Ejercicio 4.4
 ### Enunciado
 Demostrar que si $\langle c_1, e_1, s \rangle \triangleright^k \langle c', e',
@@ -19,7 +19,7 @@ que aplicamos el caso base. Como ahora tenemos que $\langle c_1', e_1', s
 \rangle \triangleright^k \langle c', e', s' \rangle$, podemos aplicar la
 hipótesis de inducción y obtener el resultado que buscábamos.
 
-## Ejercicio 4.5 (TODO)
+## Ejercicio 4.5
 ### Enunciado
 Demostrar que si $\langle c_1 : c_2, e, s \rangle \triangleright^k \langle
 \varepsilon, e'', s'' \rangle$, entonces existe una configuración $\langle

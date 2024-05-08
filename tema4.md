@@ -47,7 +47,12 @@ $$
 \langle c_1 : c_2, e, s \rangle \triangleright \langle c_1' : c_2, e_1, s_1 \rangle \triangleright^{k_0} \langle \varepsilon, e'',
 s'' \rangle
 $$
-donde $c_1'$ puede ser $\varepsilon$.
+donde $c_1'$ puede ser $\varepsilon$. Esto es así si consideramos que
+$$
+\langle c_1, e, s \rangle \triangleright \langle c_1', e_1, s_1 \rangle,
+$$
+aplicamos el anterior ejercicio y tenemos en cuenta el determinismo de este
+lenguaje.
 
 Si es el caso de que $c_1' = \varepsilon$, entonces ya tenemos el resultado
 porque $k_1 = 1$ y $k_2 = k_0$ y podemos aplicar la hipótesis de inducción al
@@ -62,5 +67,139 @@ $$
 Pero entonces con simplemente sumar un paso más a $k_1'$, obtenemos $k_1$ que
 cumplirá el resultado que buscábamos:
 $$
-\langle c_1, e, s \rangle \triangleright \langle c_1', e_1, s_1 \rangle \triangleright^{k_1'} \langle \varepsilon, e', s' \rangle
+\langle c_1, e, s \rangle \triangleright \langle c_1', e_1, s_1 \rangle \triangleright^{k_1'} \langle \varepsilon, e', s' \rangle.
+$$
+
+## Ejercicio 4.6
+### Enunciado
+Demostrar que la semántica dada de la MA es determinista.
+$$
+\gamma \triangleright \gamma' \land \gamma \triangleright \gamma'' \Rightarrow
+\gamma' = \gamma''
+$$
+
+### Resolución
+No es posible que $\gamma'$ sea distinto de $\gamma''$ puesto que solo hay una
+derivación para cada instrucción.
+
+## Ejercicio 4.7
+### Enunciado
+Modificar la MA para referirse a las variables por su dirección:
+- Las configuraciones serán $\langle c, e, m \rangle$ con $m \in \mathbb{Z}^*$
+    tal que $m\left[ n \right]$ toma el $n$-ésimo valor de la lista $m$.
+
+- Sustituir $\mathtt{FETCH-}x$ y $\mathtt{STORE-}x$ por $\mathtt{GET-}n$ y
+    $\mathtt{PUT}-n$ donde $n \in \mathbb{N}$ representa una dirección.
+
+Dar la semántica operacional de esta nueva MA.
+
+### Resolución
+No daremos todas las instrucciones por ser muchas equivalentes, de hecho, todas
+las que no utilicen o modifiquen el estado en la anterior MA serán iguales en
+la nueva (cambiando las $s$ por $m$ simplemente). Por tanto, solo tenemos que modificar las dos que nos indica el
+enunciado:
+$$
+\begin{align*}
+\langle \mathtt{GET-}x : c, e, m \rangle &\triangleright \langle
+c, m\left[ x \right] : e, m \rangle\\
+\langle \mathtt{STORE-}x : c, z : e, m \rangle &\triangleright \langle
+c, e, m' \rangle, \text{ donde } m'\left[ n \right] = \begin{cases}
+    m[n], &\text{si } n \neq x\\
+    z, &\text{si } n = x 
+\end{cases}\\
+\end{align*}
+$$
+
+## Ejercicio 4.8
+### Enunciado
+Modificar la MA del anterior ejercicio para que tenga instrucciones de salto no
+estructuradas:
+- Las configuraciones serán $\langle pc, e, m \rangle$ donde $pc \in \mathbb{N}$
+    indica el contador de programa que apunta a la siguiente instrucción a
+    ejecutar en $c$ ($c\left[ pc \right]$).
+- Sustituir $\mathtt{BRANCH}$ y $\mathtt{LOOP}$ por $\mathtt{LABEL-}l$,
+    $\mathtt{JUMP-}l$ y $\mathtt{JUMPFALSE}-l$, representado $\mathtt{LABEL-}l$
+    con $l \in \mathbb{N}$ una posición en $c$.
+
+Dar la semántica operacional de esta nueva MA.
+
+### Resolución
+La mayoría de instrucciones (a parte de las mencionadas en el enunciado) no
+tendrán un cambio sustancial respecto a la anterior MA. Por ello, solo mostraré,
+a modo de ejemplo, un par de ellas:
+- Si $c\left[ pc \right] = \mathtt{PUSH-}n$:
+$$
+\begin{align*}
+\langle pc, c, e, m \rangle &\triangleright \langle pc + 1, c,
+\mathcal{N}\llbracket n \rrbracket : e, m \rangle\\
+\end{align*}
+$$
+- Si $c\left[ pc \right] = \mathtt{GET-}n$:
+$$
+\langle pc, c, e, m \rangle \triangleright \langle pc + 1,
+c, m\left[ x \right] : e, m \rangle
+$$
+Y el resto de instrucciones serán igual.
+
+Veamos ahora las instrucciones que nos pide cambiar el enunciado:
+- Si $c\left[ pc \right] = \mathtt{LABEL-}l$:
+    $$
+    \langle pc, c, e, m \rangle \triangleright \langle pc + 1, c, e, m \rangle
+    $$
+    Simplemente queremos esta instrucción para que luego cuando la busquemos con
+    el $\mathtt{JUMP}$ podamos saltar a ella.
+- Si $c\left[ pc \right] = \mathtt{JUMP-}l$:
+    $$
+    \langle pc, c, e, m \rangle \triangleright \langle pc', c, e, m \rangle
+    $$
+    donde $pc' = \min \left\{ pc : c\left[ pc \right] = \mathtt{LABEL-}l \right\}$, es decir, saltará a la primera instrucción que sea $\mathtt{LABEL-}l$.
+- Si $c\left[ pc \right] = \mathtt{JUMPFALSE-}l$ tenemos dos casos:
+    $$
+    \begin{align*}
+    \langle pc, c, \mathbf{ff} : e, m \rangle &\triangleright \langle pc', c, e, m \rangle\\
+    \langle pc, c, \mathbf{tt} : e, m \rangle &\triangleright \langle pc + 1, c, e, m \rangle\\
+    \end{align*}
+    $$
+    donde $pc' = \min \left\{ pc : c\left[ pc \right] = \mathtt{LABEL-}l \right\}$. Es decir, que si en la cima de la pila de ejecución hay un símbolo de *falso*, se realiza el salto y, si no es así, se pasa a la siguiente instrucción.
+
+## Ejercicio 4.11
+### Enunciado
+Demostrar que $\mathcal{CA}\llbracket \left( a_1 + a_2 \right) + a_3 \rrbracket
+\neq \mathcal{CA}\llbracket a_1 + \left( a_2 + a_3 \right) \rrbracket$, pero que
+se comportan de forma *suficientemente similar*.
+
+### Resolución
+Por definición:
+$$
+\begin{align*}
+\mathcal{SA}\llbracket \left( a_1 + a_2 \right) + a_3 \rrbracket &=
+\mathcal{SA}\llbracket a_3 \rrbracket : \mathcal{SA}\llbracket a_1 + a_2
+\rrbracket : \mathtt{ADD}\\
+&= \mathcal{SA}\llbracket a_3 \rrbracket : \mathcal{SA}\llbracket a_2 \rrbracket
+: \mathcal{SA}\llbracket a_1 \rrbracket : \mathtt{ADD} : \mathtt{ADD}
+\end{align*}
+$$
+Mientras que:
+$$
+\begin{align*}
+\mathcal{SA}\llbracket a_1 + \left( a_2 + a_3 \right) \rrbracket &=
+\mathcal{SA}\llbracket a_2 + a_3 \rrbracket : \mathcal{SA}\llbracket a_1
+\rrbracket : \mathtt{ADD}\\
+&= \mathcal{SA}\llbracket a_3 \rrbracket : \mathcal{SA}\llbracket a_2 \rrbracket
+: \mathtt{ADD} : \mathcal{SA}\llbracket a_1 \rrbracket : \mathtt{ADD}
+\end{align*}
+$$
+con lo que estrictamente no son iguales. Sin embargo, son *suficientemente
+similares* puesto que la suma es asociativa y el orden en que se hagan las
+operaciones no importa.
+
+## Ejercicio 4.14
+### Enunciado
+Extender **WHILE** con la instrucción `repeat S until b` y dar la compilación de
+esta a AM.
+
+### Resolución
+La compilación será:
+$$
+\mathcal{CS}\llbracket \mathtt{repeat}\ S\ \mathtt{until}\ b \rrbracket = \mathcal{CS}\llbracket S \rrbracket : \mathtt{LOOP}\left( \mathcal{CB}\llbracket ¬b \rrbracket, \mathcal{CS}\llbracket S \rrbracket \right).
 $$
